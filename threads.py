@@ -3,6 +3,7 @@ import threading
 from queue import LifoQueue, PriorityQueue, Queue
 from random import randint
 from time import sleep
+from random import choice, randint
 
 
 #define
@@ -65,6 +66,26 @@ class Worker(threading.Thread):
         self.product = None
         self.working = False
         self.progress = 0
+    
+    @property
+    def state(self):
+        if self.working:
+            return f"{self.product} ({self.progress}%)"
+        return ":zzz: Idle"
+
+    def simulate_idle(self):
+        self.product = None
+        self.working = False
+        self.progress = 0
+        sleep(randint(1, 3))
+
+    def simulate_work(self):
+        self.working = True
+        self.progress = 0
+        delay = randint(1, 1 + 15 // self.speed)
+        for _ in range(100):
+            sleep(delay / 100)
+            self.progress += 1
 
 #thread
 class Worker(threading.Thread):
