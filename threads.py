@@ -4,6 +4,15 @@ from queue import LifoQueue, PriorityQueue, Queue
 from random import randint
 from time import sleep
 from random import choice, randint
+from itertools import zip_longest
+from dataclasses import dataclass, field
+from enum import IntEnum
+
+from rich.align import Align
+from rich.columns import Columns
+from rich.console import Group
+from rich.live import Live
+from rich.panel import Panel
 
 
 #define
@@ -13,32 +22,8 @@ QUEUE_TYPES = {
     "heap": PriorityQueue
 }
 
-#define arguement
-def main(args):
-    buffer = QUEUE_TYPES[args.queue]()
-
-#define parse
-def parse_args():
-    parser = argparse.ArgumentParser()
-    #producers_3
-    parser.add_argument("-q", "--queue", choices=QUEUE_TYPES, default="fifo")
-    #consumer_2
-    parser.add_argument("-p", "--producers", type=int, default=3)
-    #producer_speed_1
-    parser.add_argument("-ps", "--producer-speed", type=int, default=1)
-    #consumer_speed_1
-    parser.add_argument("-cs", "--consumer-speed", type=int, default=1)
-    return parser.parse_args()
-
-#arguement
-if __name__ == "__main__":
-    try:
-        main(parse_args())
-    except KeyboardInterrupt:
-        pass
 
 #define the products
-
 PRODUCTS = (
     ":balloon:",
     ":cookie:",
@@ -193,25 +178,23 @@ def main(args):
   view = View(buffer, producers, consumers)
   view.animate()
 
-#thread
-class Worker(threading.Thread):
-      
-        @property
-        def state(self):
-            if self.working:
-                return f"{self.product} ({self.progress}%)"
-                return ":zzz: Idle"
+#define parse
+def parse_args():
+    parser = argparse.ArgumentParser()
+    #producers_3
+    parser.add_argument("-q", "--queue", choices=QUEUE_TYPES, default="fifo")
+    #consumer_2
+    parser.add_argument("-p", "--producers", type=int, default=3)
+    #producer_speed_1
+    parser.add_argument("-ps", "--producer-speed", type=int, default=1)
+    #consumer_speed_1
+    parser.add_argument("-cs", "--consumer-speed", type=int, default=1)
+    return parser.parse_args()
 
-        def simulate_idle(self):
-           self.product = None
-           self.working = False
-           self.progress = 0
-           sleep(randint(1, 3))
-           
-        def simulate_work(self):
-            self.working = True
-            self.progress = 0
-            delay = randint(1, 1 + 15 // self.speed)
-            for _ in range(100):
-                sleep(delay / 100)
-                self.progress += 1
+#arguement
+if __name__ == "__main__":
+    try:
+        main(parse_args())
+    except KeyboardInterrupt:
+        pass
+
